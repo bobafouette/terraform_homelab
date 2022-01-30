@@ -2,12 +2,12 @@ spec:
   restartPolicy: OnFailure
   containers:
   - name: dashy
-    image: lissy93/dashy
+    image: b4bz/homer
     volumeMounts:
     - name: host-path-0
-      mountPath: /app/public/
+      mountPath: /www/assets
       readOnly: false
   volumes:
   - name: host-path-0
     hostPath:
-      path: /var/dashy/config/
+      path: /var/homer/config/

@@ -51,8 +51,8 @@ resource "google_compute_instance" "control_command" {
   # metadata_startup_script = "useradd adminuser && chpasswd <<<'adminuser:test' && usermod -aG sudo adminuser && apt install openssh-server && sudo apt-add-repository universe && sudo apt update && sudo apt install -y google-compute-engine google-osconfig-agent"
 }
 
-resource "google_compute_instance" "dashy" {
-  name         = "dashy"
+resource "google_compute_instance" "dashboard" {
+  name         = "dashboard"
   machine_type = "g1-small"
 
   boot_disk {
@@ -62,8 +62,8 @@ resource "google_compute_instance" "dashy" {
   }
 
   provisioner "file" {
-    source      = "config/dashy.conf.yml"
-    destination = "/var/dashy/config/conf.yml"
+    source      = "config/homer.conf.yml"
+    destination = "/var/homer/config/conf.yml"
 
     connection {
       type     = "ssh"
@@ -94,10 +94,9 @@ resource "google_compute_instance" "dashy" {
     gce-container-declaration = file("config/dashy-gce-container.yml")
     # enable-osconfig = "TRUE"
   }
-  metadata_startup_script = "mkdir -p /var/dashy/config/; wget -O /var/dashy/config/conf.yml https://raw.githubusercontent.com/bobafouette/terraform_ho
-melab/main/config/dashy.conf.yml"
+  metadata_startup_script = "mkdir -p /var/homer/config/; wget -O /var/homer/config/conf.yml https://raw.githubusercontent.com/bobafouette/terraform_homelab/main/config/homer.conf.yml"
 }
 
 output "name" {
-  value = google_compute_instance.dashy.name
+  value = google_compute_instance.dashboard.name
 }
