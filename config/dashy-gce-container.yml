@@ -1,0 +1,13 @@
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: dashy
+    image: lissy93/dashy
+    volumeMounts:
+    - name: host-path-0
+      mountPath: /app/public/
+      readOnly: false
+  volumes:
+  - name: host-path-0
+    hostPath:
+      path: /var/dashy/config/
