@@ -91,7 +91,7 @@ resource "google_compute_instance" "dashboard" {
 
   metadata = {
     # ssh-keys = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSvZz+2ls2CDBnZzvKmvhy1/Kq/YrhDAOVAcafMWzfhJEZoNvbQ1Szg4sVVG7N4RBl8m/1xqqcmbTsJyDqRol/rJxmFeuieW/VX9HNsRVy4rmBaz3sNYbgAjM3pMfx2yk2QXVGTKzFUvXgPh+6+SacEp/bDfNXQFxAQYzfuKJ5qD9GMrJ4YWuR7TpgrPeaQPJuKrUOVuBFtKs+Diq7j0ZzCr4R/baVktu16mmUt5z6cCfzNMrBH9da6QpP26svu85AmkwykhkUJZBUMnVQ1LvrG2up5kFDopTpDnGzMf4r3TLdNaRffbERfkLxpx3QZUXUg/rxIQKSWeOvYSOs3oOV root@a4122299c78b"
-    gce-container-declaration = file("config/dashy-gce-container.yml")
+    gce-container-declaration = file("config/homer-gce-container.yml")
     # enable-osconfig = "TRUE"
   }
   metadata_startup_script = "mkdir -p /var/homer/config/; wget -O /var/homer/config/conf.yml https://raw.githubusercontent.com/bobafouette/terraform_homelab/main/config/homer.conf.yml"
