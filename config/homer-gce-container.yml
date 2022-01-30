@@ -7,6 +7,13 @@ spec:
     - name: host-path-0
       mountPath: /www/assets
       readOnly: false
+    env:
+      - name: PORT
+        value: 80
+      - name: UID
+        value: 0
+      - name: GUID
+        value: 0
   volumes:
   - name: host-path-0
     hostPath:

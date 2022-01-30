@@ -54,6 +54,7 @@ resource "google_compute_instance" "control_command" {
 resource "google_compute_instance" "dashboard" {
   name         = "dashboard"
   machine_type = "g1-small"
+  tags = ["http-server","https-server"]
 
   boot_disk {
     initialize_params {
