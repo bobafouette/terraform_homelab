@@ -94,7 +94,8 @@ resource "google_compute_instance" "dashy" {
     gce-container-declaration = file("config/dashy-gce-container.yml")
     # enable-osconfig = "TRUE"
   }
-  metadata_startup_script = "mkdir -p /var/dashy/config/"
+  metadata_startup_script = "mkdir -p /var/dashy/config/; wget -O /var/dashy/config/conf.yml https://raw.githubusercontent.com/bobafouette/terraform_ho
+melab/main/config/dashy.conf.yml"
 }
 
 output "name" {
