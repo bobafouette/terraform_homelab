@@ -19,6 +19,31 @@ provider "google" {
 #   name = "terraform-network"
 # }
 
+resource "google_dns_managed_zone" "lab" {
+  name     = "lab"
+  dns_name = "lab.blocker.rocks."
+}
+
+resource "google_dns_record_set" "frontend" {
+  name = "frontend.${google_dns_managed_zone.lab.dns_name}"
+  type = "A"
+  ttl  = 300
+
+  managed_zone = google_dns_managed_zone.lab.name
+
+  rrdatas = [google_compute_instance.dashboard.network_interface[0].access_config[0].nat_ip]
+}
+
+resource "google_dns_record_set" "pass" {
+  name = "pass.${google_dns_managed_zone.lab.dns_name}"
+  type = "A"
+  ttl  = 300
+
+  managed_zone = google_dns_managed_zone.lab.name
+
+  rrdatas = [google_compute_instance.bitwarden.network_interface[0].access_config[0].nat_ip]
+}
+
 resource "google_compute_instance" "control_command" {
   name         = "terraform-instance"
   machine_type = "f1-micro"
@@ -62,18 +87,6 @@ resource "google_compute_instance" "dashboard" {
     }
   }
 
-  provisioner "file" {
-    source      = "config/homer.conf.yml"
-    destination = "/var/homer/config/conf.yml"
-
-    connection {
-      type     = "ssh"
-      user     = "root"
-      private_key = file("auth/google_compute_engine")
-      host     = "${self.network_interface.0.access_config.0.nat_ip}"
-    }
-
-  }
 
   network_interface {
     # network = google_compute_network.vpc_network.name
@@ -95,7 +108,42 @@ resource "google_compute_instance" "dashboard" {
     gce-container-declaration = file("config/homer-gce-container.yml")
     # enable-osconfig = "TRUE"
   }
-  metadata_startup_script = "mkdir -p /var/homer/config/; wget -O /var/homer/config/conf.yml https://raw.githubusercontent.com/bobafouette/terraform_homelab/main/config/homer.conf.yml"
+  metadata_startup_script = "mkdir -p /var/homer/config/; wget -O /var/homer/config/config.yml https://raw.githubusercontent.com/bobafouette/terraform_homelab/main/config/homer.conf.yml"
+}
+
+resource "google_compute_instance" "bitwarden" {
+  name         = "bitwarden"
+  machine_type = "g1-small"
+  tags = ["http-server","https-server"]
+
+  boot_disk {
+    initialize_params {
+      image = "cos-cloud/cos-93-16623-102-4"
+    }
+  }
+
+
+  network_interface {
+    # network = google_compute_network.vpc_network.name
+    # access_config {
+    # }
+    network = "default"
+
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+
+  metadata = {
+    # ssh-keys = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSvZz+2ls2CDBnZzvKmvhy1/Kq/YrhDAOVAcafMWzfhJEZoNvbQ1Szg4sVVG7N4RBl8m/1xqqcmbTsJyDqRol/rJxmFeuieW/VX9HNsRVy4rmBaz3sNYbgAjM3pMfx2yk2QXVGTKzFUvXgPh+6+SacEp/bDfNXQFxAQYzfuKJ5qD9GMrJ4YWuR7TpgrPeaQPJuKrUOVuBFtKs+Diq7j0ZzCr4R/baVktu16mmUt5z6cCfzNMrBH9da6QpP26svu85AmkwykhkUJZBUMnVQ1LvrG2up5kFDopTpDnGzMf4r3TLdNaRffbERfkLxpx3QZUXUg/rxIQKSWeOvYSOs3oOV root@a4122299c78b"
+    gce-container-declaration = file("config/bitwarden-gce-container.yml")
+    # enable-osconfig = "TRUE"
+  }
+  metadata_startup_script = "mkdir -p /var/bitwarden/data/;"
 }
 
 output "name" {
