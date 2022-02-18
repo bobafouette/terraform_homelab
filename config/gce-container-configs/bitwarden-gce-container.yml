@@ -1,0 +1,20 @@
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: dashy
+    image: bitwardenrs/server:latest
+    volumeMounts:
+    - name: host-path-0
+      mountPath: /data/
+      readOnly: false
+    env:
+      - name: PORT
+        value: 80
+      - name: UID
+        value: 0
+      - name: GUID
+        value: 0
+  volumes:
+  - name: host-path-0
+    hostPath:
+      path: /var/bitwarden/data/
