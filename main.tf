@@ -14,3 +14,18 @@ provider "google" {
   region  = "us-central1"
   zone    = "us-central1-c"
 }
+
+locals {
+    ansible_instances = [
+        google_compute_instance.dashboard,
+        google_compute_instance.bitwarden
+    ]
+    instances_tags = distinct(flatten([
+        for instance in local.ansible_instances: instance.tags
+    ]))
+    instances_tag_map = {
+        for tag in local.instances_tags: tag => [
+            for instance in local.ansible_instances: instance.network_interface[0].network_ip if contains(instance.tags, tag)
+        ]
+    }
+}

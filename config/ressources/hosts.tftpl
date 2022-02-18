@@ -1,0 +1,6 @@
+%{ for tag, instances in tag_map ~}
+[${tag}]
+%{ for instance_ip in instances }${instance_ip}
+%{ endfor ~}
+
+%{ endfor ~}

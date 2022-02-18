@@ -1,4 +1,4 @@
 
-output "name" {
-  value = google_compute_instance.control_command.name
+output "dashboard_name" {
+  value = google_compute_instance.dashboard.name
 }

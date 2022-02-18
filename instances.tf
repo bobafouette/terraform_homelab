@@ -1,7 +1,7 @@
-
 resource "google_compute_instance" "control_command" {
   name         = "control-command"
   machine_type = "g1-small"
+  tags = ["consul-member", "consul-master"]
 
   boot_disk {
     initialize_params {
@@ -28,13 +28,33 @@ resource "google_compute_instance" "control_command" {
     ssh-keys = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSvZz+2ls2CDBnZzvKmvhy1/Kq/YrhDAOVAcafMWzfhJEZoNvbQ1Szg4sVVG7N4RBl8m/1xqqcmbTsJyDqRol/rJxmFeuieW/VX9HNsRVy4rmBaz3sNYbgAjM3pMfx2yk2QXVGTKzFUvXgPh+6+SacEp/bDfNXQFxAQYzfuKJ5qD9GMrJ4YWuR7TpgrPeaQPJuKrUOVuBFtKs+Diq7j0ZzCr4R/baVktu16mmUt5z6cCfzNMrBH9da6QpP26svu85AmkwykhkUJZBUMnVQ1LvrG2up5kFDopTpDnGzMf4r3TLdNaRffbERfkLxpx3QZUXUg/rxIQKSWeOvYSOs3oOV root@a4122299c78b"
     # enable-osconfig = "TRUE"
   }
+
   metadata_startup_script = file("config/startup-scripts/startup-command_control.sh")
+
+  provisioner "file" {
+    content     = templatefile("config/ressources/hosts.tftpl", {tag_map = local.instances_tag_map})
+    destination = "~/hosts"
+  }
+
+  connection {
+    type     = "ssh"
+    user     = "root"
+    private_key = file("auth/google_compute_engine")
+    host     = self.network_interface[0].access_config[0].nat_ip
+  }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "ansible-playbook "
+  #   ]
+  # }
+
 }
 
 resource "google_compute_instance" "dashboard" {
   name         = "dashboard"
   machine_type = "g1-small"
-  tags = ["http-server","https-server"]
+  tags = ["http-server", "https-server", "consul-member", "consul-slave"]
 
   boot_disk {
     initialize_params {
@@ -69,7 +89,7 @@ resource "google_compute_instance" "dashboard" {
 resource "google_compute_instance" "bitwarden" {
   name         = "bitwarden"
   machine_type = "g1-small"
-  tags = ["http-server","https-server"]
+  tags = ["http-server","https-server", "consul-member", "consul-slave"]
 
   boot_disk {
     initialize_params {

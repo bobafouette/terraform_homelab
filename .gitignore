@@ -1,3 +1,4 @@
 auth
 .terraform*
 *.tfstate*
+.DS_Store
