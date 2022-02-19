@@ -36,25 +36,18 @@ resource "google_compute_instance" "control_command" {
     destination = "~/hosts"
   }
 
-  connection {
-    type     = "ssh"
-    user     = "root"
-    private_key = file("auth/google_compute_engine")
-    host     = self.network_interface[0].access_config[0].nat_ip
+  provisioner "remote-exec" {
+    inline = [
+      "cat ~/hosts"
+    ]
   }
-
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "ansible-playbook "
-  #   ]
-  # }
 
 }
 
 resource "google_compute_instance" "dashboard" {
   name         = "dashboard"
   machine_type = "g1-small"
-  tags = ["http-server", "https-server", "consul-member", "consul-slave"]
+  tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos"]
 
   boot_disk {
     initialize_params {
@@ -89,7 +82,7 @@ resource "google_compute_instance" "dashboard" {
 resource "google_compute_instance" "bitwarden" {
   name         = "bitwarden"
   machine_type = "g1-small"
-  tags = ["http-server","https-server", "consul-member", "consul-slave"]
+  tags = ["http-server","https-server", "consul-member", "consul-slave", "coos"]
 
   boot_disk {
     initialize_params {
@@ -119,4 +112,5 @@ resource "google_compute_instance" "bitwarden" {
     # enable-osconfig = "TRUE"
   }
   metadata_startup_script = file("config/startup-scripts/startup-pass.sh")
+
 }
