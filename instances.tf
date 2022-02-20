@@ -25,20 +25,31 @@ resource "google_compute_instance" "control_command" {
   }
 
   metadata = {
-    ssh-keys = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSvZz+2ls2CDBnZzvKmvhy1/Kq/YrhDAOVAcafMWzfhJEZoNvbQ1Szg4sVVG7N4RBl8m/1xqqcmbTsJyDqRol/rJxmFeuieW/VX9HNsRVy4rmBaz3sNYbgAjM3pMfx2yk2QXVGTKzFUvXgPh+6+SacEp/bDfNXQFxAQYzfuKJ5qD9GMrJ4YWuR7TpgrPeaQPJuKrUOVuBFtKs+Diq7j0ZzCr4R/baVktu16mmUt5z6cCfzNMrBH9da6QpP26svu85AmkwykhkUJZBUMnVQ1LvrG2up5kFDopTpDnGzMf4r3TLdNaRffbERfkLxpx3QZUXUg/rxIQKSWeOvYSOs3oOV root@a4122299c78b"
-    # enable-osconfig = "TRUE"
+    ssh-keys = file("auth/google_compute_engine.pub")
   }
 
   metadata_startup_script = file("config/startup-scripts/startup-command_control.sh")
 
+  connection {
+    type     = "ssh"
+    user     = "root"
+    private_key = file("auth/google_compute_engine")
+    host     = self.network_interface[0].access_config[0].nat_ip
+  }
+
   provisioner "file" {
     content     = templatefile("config/ressources/hosts.tftpl", {tag_map = local.instances_tag_map})
-    destination = "~/hosts"
+    destination = "hosts"
+  }
+
+  provisioner "file" {
+    content     = file("auth/google_compute_engine")
+    destination = "google_compute_engine"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "cat ~/hosts"
+      "chmod 500 google_compute_engine"
     ]
   }
 
@@ -72,9 +83,7 @@ resource "google_compute_instance" "dashboard" {
   }
 
   metadata = {
-    # ssh-keys = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSvZz+2ls2CDBnZzvKmvhy1/Kq/YrhDAOVAcafMWzfhJEZoNvbQ1Szg4sVVG7N4RBl8m/1xqqcmbTsJyDqRol/rJxmFeuieW/VX9HNsRVy4rmBaz3sNYbgAjM3pMfx2yk2QXVGTKzFUvXgPh+6+SacEp/bDfNXQFxAQYzfuKJ5qD9GMrJ4YWuR7TpgrPeaQPJuKrUOVuBFtKs+Diq7j0ZzCr4R/baVktu16mmUt5z6cCfzNMrBH9da6QpP26svu85AmkwykhkUJZBUMnVQ1LvrG2up5kFDopTpDnGzMf4r3TLdNaRffbERfkLxpx3QZUXUg/rxIQKSWeOvYSOs3oOV root@a4122299c78b"
     gce-container-declaration = file("config/gce-container-configs/homer-gce-container.yml")
-    # enable-osconfig = "TRUE"
   }
   metadata_startup_script = file("config/startup-scripts/startup-dashboard.sh")
 }
@@ -92,9 +101,6 @@ resource "google_compute_instance" "bitwarden" {
 
 
   network_interface {
-    # network = google_compute_network.vpc_network.name
-    # access_config {
-    # }
     network = "default"
 
     access_config {
@@ -107,10 +113,9 @@ resource "google_compute_instance" "bitwarden" {
   }
 
   metadata = {
-    # ssh-keys = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSvZz+2ls2CDBnZzvKmvhy1/Kq/YrhDAOVAcafMWzfhJEZoNvbQ1Szg4sVVG7N4RBl8m/1xqqcmbTsJyDqRol/rJxmFeuieW/VX9HNsRVy4rmBaz3sNYbgAjM3pMfx2yk2QXVGTKzFUvXgPh+6+SacEp/bDfNXQFxAQYzfuKJ5qD9GMrJ4YWuR7TpgrPeaQPJuKrUOVuBFtKs+Diq7j0ZzCr4R/baVktu16mmUt5z6cCfzNMrBH9da6QpP26svu85AmkwykhkUJZBUMnVQ1LvrG2up5kFDopTpDnGzMf4r3TLdNaRffbERfkLxpx3QZUXUg/rxIQKSWeOvYSOs3oOV root@a4122299c78b"
     gce-container-declaration = file("config/gce-container-configs/bitwarden-gce-container.yml")
-    # enable-osconfig = "TRUE"
   }
+
   metadata_startup_script = file("config/startup-scripts/startup-pass.sh")
 
 }
