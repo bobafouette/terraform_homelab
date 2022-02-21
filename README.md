@@ -25,8 +25,6 @@ I could not find any official documentation on this subject but CoOS instances a
 
 
 ## Todo:
-- Fix ansible first execution
-- Dynamic coos instances creations (using foreach and count operators)
 - Traefik/nginx reverse proxy based on consul
 - Test Nomad
 - ...?
