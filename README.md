@@ -25,6 +25,10 @@ I could not find any official documentation on this subject but CoOS instances a
 
 
 ## Todo:
-- Minimalized startup scripts
-- Dynamic coos instances creations
+- Fix ansible first execution
+- Reduce specifix setup made in startup scripts
+- Minimalized startup scripts (mutualized startup script for all CoOS instances)
+- Dynamic coos instances creations (using foreach and count operators)
+- Traefik/nginx reverse proxy based on consul
+- Test Nomad
 - ...?
