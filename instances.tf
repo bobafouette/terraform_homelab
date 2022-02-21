@@ -55,18 +55,25 @@ resource "google_compute_instance" "control_command" {
 
 }
 
-resource "google_compute_instance" "dashboard" {
-  name         = "dashboard"
+resource "google_compute_instance" "containers" {
+  for_each = local.gce_container_configs
+  name = each.key
   machine_type = "g1-small"
-  tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos"]
+  tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos", each.key]
+
+  metadata = {
+    gce-container-declaration = file(each.value)
+  }
+  metadata_startup_script = templatefile("config/startup-scripts/startup-containers.sh", {
+    could_public_key = file("auth/google_compute_engine.pub")
+    startup_container_script = "startup-${each.key}.sh"
+  })
 
   boot_disk {
     initialize_params {
       image = "cos-cloud/cos-93-16623-102-4"
     }
   }
-
-
   network_interface {
     # network = google_compute_network.vpc_network.name
     # access_config {
@@ -77,45 +84,72 @@ resource "google_compute_instance" "dashboard" {
       // Ephemeral public IP
     }
   }
-
   service_account {
     scopes = ["cloud-platform"]
   }
-
-  metadata = {
-    gce-container-declaration = file("config/gce-container-configs/homer-gce-container.yml")
-  }
-  metadata_startup_script = file("config/startup-scripts/startup-dashboard.sh")
 }
 
-resource "google_compute_instance" "bitwarden" {
-  name         = "bitwarden"
-  machine_type = "g1-small"
-  tags = ["http-server","https-server", "consul-member", "consul-slave", "coos"]
+# resource "google_compute_instance" "dashboard" {
+#   name         = "dashboard"
+#   machine_type = "g1-small"
+#   tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos"]
 
-  boot_disk {
-    initialize_params {
-      image = "cos-cloud/cos-93-16623-102-4"
-    }
-  }
+#   boot_disk {
+#     initialize_params {
+#       image = "cos-cloud/cos-93-16623-102-4"
+#     }
+#   }
 
 
-  network_interface {
-    network = "default"
+#   network_interface {
+#     # network = google_compute_network.vpc_network.name
+#     # access_config {
+#     # }
+#     network = "default"
 
-    access_config {
-      // Ephemeral public IP
-    }
-  }
+#     access_config {
+#       // Ephemeral public IP
+#     }
+#   }
 
-  service_account {
-    scopes = ["cloud-platform"]
-  }
+#   service_account {
+#     scopes = ["cloud-platform"]
+#   }
 
-  metadata = {
-    gce-container-declaration = file("config/gce-container-configs/bitwarden-gce-container.yml")
-  }
+#   metadata = {
+#     gce-container-declaration = file("config/gce-container-configs/homer-gce-container.yml")
+#   }
+#   metadata_startup_script = file("config/startup-scripts/startup-dashboard.sh")
+# }
 
-  metadata_startup_script = file("config/startup-scripts/startup-pass.sh")
+# resource "google_compute_instance" "bitwarden" {
+#   name         = "bitwarden"
+#   machine_type = "g1-small"
+#   tags = ["http-server","https-server", "consul-member", "consul-slave", "coos"]
 
-}
+#   boot_disk {
+#     initialize_params {
+#       image = "cos-cloud/cos-93-16623-102-4"
+#     }
+#   }
+
+
+#   network_interface {
+#     network = "default"
+
+#     access_config {
+#       // Ephemeral public IP
+#     }
+#   }
+
+#   service_account {
+#     scopes = ["cloud-platform"]
+#   }
+
+#   metadata = {
+#     gce-container-declaration = file("config/gce-container-configs/bitwarden-gce-container.yml")
+#   }
+
+#   metadata_startup_script = file("config/startup-scripts/startup-pass.sh")
+
+# }

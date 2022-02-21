@@ -1,4 +1,4 @@
 
-output "dashboard_name" {
-  value = google_compute_instance.dashboard.name
+output "containers_name" {
+  value = [for container_instance in google_compute_instance.containers: container_instance.name]
 }

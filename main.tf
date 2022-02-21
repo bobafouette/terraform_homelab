@@ -17,8 +17,7 @@ provider "google" {
 
 locals {
     ansible_instances = [
-        google_compute_instance.dashboard,
-        google_compute_instance.bitwarden
+      for container_instance in google_compute_instance.containers: container_instance
     ]
     instances_tags = distinct(flatten([
         for instance in local.ansible_instances: instance.tags
@@ -27,5 +26,10 @@ locals {
         for tag in local.instances_tags: tag => [
             for instance in local.ansible_instances: instance.network_interface[0].network_ip if contains(instance.tags, tag)
         ]
+    }
+
+    gce_container_configs = {
+      bitwarden = "config/gce-container-configs/bitwarden-gce-container.yml"
+      dashboard = "config/gce-container-configs/homer-gce-container.yml"
     }
 }
