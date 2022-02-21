@@ -65,7 +65,7 @@ resource "google_compute_instance" "containers" {
     gce-container-declaration = file(each.value)
   }
   metadata_startup_script = templatefile("config/startup-scripts/startup-containers.sh", {
-    could_public_key = file("auth/google_compute_engine.pub")
+    cloud_public_key = "${file("auth/google_compute_engine.pub")}",
     startup_container_script = "startup-${each.key}.sh"
   })
 
