@@ -25,12 +25,13 @@ I could not find any official documentation on this subject but CoOS instances a
 
 
 ## Todo:
-- Test Nomad
+- Find an elegant solution to upload notion's API_KEY into the cron-machine
+- Test Nomad [ON HOLD]
   - Replace Container optimized os Instances by regular ubuntu instances
   - Deploy Consul and Nomad on them
   - Add Firewall rule to allow HTTP UI acces on the Nomad instance (port `4646`)
   - Schedule containers via Nomad's docker plugin on those instances
-- Traefik/nginx reverse proxy based on consul
-- Deploy Vault
-- Deploy Boundary
+- Traefik/nginx reverse proxy based on consul [ON HOLD]
+- Deploy Vault [ON HOLD]
+- Deploy Boundary [ON HOLD]
 - ...?
