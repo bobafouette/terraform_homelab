@@ -15,20 +15,6 @@ echo "remote_tmp = /tmp/ansible" >> /etc/ansible/ansible.cfg
 # Install ansible community's docker module
 ansible-galaxy collection install community.docker
 
-#####
-# Boostrap Consul Server
-#####
-# Install source
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install consul
-sudo apt-get update && sudo apt-get install consul-enterprise.x86_64
-# Start Consul agent
-consul agent \
-  -server \
-  -bootstrap-expect=1 \
-  -data-dir=/tmp/consul \
-  -config-dir=/etc/consul.d &
 
 # Wait for ansible's inventory and private key to be uploaded
 while [ ! -f /root/hosts ] || [ ! -f /root/google_compute_engine ]; do echo "waiting for ansible inventory and private key"; sleep 2; done

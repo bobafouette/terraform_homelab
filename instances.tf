@@ -52,7 +52,6 @@ resource "google_compute_instance" "control_command" {
       "chmod 500 google_compute_engine"
     ]
   }
-
 }
 
 resource "google_compute_instance" "containers" {
@@ -88,68 +87,3 @@ resource "google_compute_instance" "containers" {
     scopes = ["cloud-platform"]
   }
 }
-
-# resource "google_compute_instance" "dashboard" {
-#   name         = "dashboard"
-#   machine_type = "g1-small"
-#   tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos"]
-
-#   boot_disk {
-#     initialize_params {
-#       image = "cos-cloud/cos-93-16623-102-4"
-#     }
-#   }
-
-
-#   network_interface {
-#     # network = google_compute_network.vpc_network.name
-#     # access_config {
-#     # }
-#     network = "default"
-
-#     access_config {
-#       // Ephemeral public IP
-#     }
-#   }
-
-#   service_account {
-#     scopes = ["cloud-platform"]
-#   }
-
-#   metadata = {
-#     gce-container-declaration = file("config/gce-container-configs/homer-gce-container.yml")
-#   }
-#   metadata_startup_script = file("config/startup-scripts/startup-dashboard.sh")
-# }
-
-# resource "google_compute_instance" "bitwarden" {
-#   name         = "bitwarden"
-#   machine_type = "g1-small"
-#   tags = ["http-server","https-server", "consul-member", "consul-slave", "coos"]
-
-#   boot_disk {
-#     initialize_params {
-#       image = "cos-cloud/cos-93-16623-102-4"
-#     }
-#   }
-
-
-#   network_interface {
-#     network = "default"
-
-#     access_config {
-#       // Ephemeral public IP
-#     }
-#   }
-
-#   service_account {
-#     scopes = ["cloud-platform"]
-#   }
-
-#   metadata = {
-#     gce-container-declaration = file("config/gce-container-configs/bitwarden-gce-container.yml")
-#   }
-
-#   metadata_startup_script = file("config/startup-scripts/startup-pass.sh")
-
-# }
