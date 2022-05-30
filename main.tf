@@ -29,7 +29,9 @@ locals {
     }
 
     gce_container_configs = {
-      bitwarden = "config/gce-container-configs/bitwarden-gce-container.yml"
-      dashboard = "config/gce-container-configs/homer-gce-container.yml"
+      ## Commenting this part as those are not production ready for now
+      # bitwarden = "config/gce-container-configs/bitwarden-gce-container.yml"
+      # dashboard = "config/gce-container-configs/homer-gce-container.yml"
+      ##
     }
 }

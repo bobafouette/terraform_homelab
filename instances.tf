@@ -1,7 +1,10 @@
 resource "google_compute_instance" "control_command" {
   name         = "control-command"
   machine_type = "g1-small"
-  tags = ["consul-member", "consul-master"]
+  ## Removed http tags to avoid REST API backdoors
+  ## Removed consul-tags as well
+  # tags = ["http-server", "https-server", "consul-member", "consul-master"]
+  tags = ["cron-machine"]
 
   boot_disk {
     initialize_params {
