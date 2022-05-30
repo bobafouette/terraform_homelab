@@ -4,6 +4,7 @@ resource "google_compute_instance" "control_command" {
   ## Removed http tags to avoid REST API backdoors
   ## Removed consul-tags as well
   # tags = ["http-server", "https-server", "consul-member", "consul-master"]
+  ##
   tags = ["cron-machine"]
 
   boot_disk {
@@ -86,6 +87,37 @@ resource "google_compute_instance" "containers" {
       // Ephemeral public IP
     }
   }
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+}
+
+resource "google_compute_instance" "cron-machine" {
+  name = "cron-machine"
+  machine_type = "g1-small"
+  tags = ["cron-machine"]
+
+  metadata = {
+    ssh-keys = file("auth/google_compute_engine.pub")
+  }
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-2004-focal-v20210927"
+    }
+  }
+
+  network_interface {
+    # network = google_compute_network.vpc_network.name
+    # access_config {
+    # }
+    network = "default"
+
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+
   service_account {
     scopes = ["cloud-platform"]
   }

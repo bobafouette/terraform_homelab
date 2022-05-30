@@ -16,9 +16,10 @@ provider "google" {
 }
 
 locals {
-    ansible_instances = [
-      for container_instance in google_compute_instance.containers: container_instance
-    ]
+    ansible_instances = concat(
+      [for container_instance in google_compute_instance.containers: container_instance],
+      [google_compute_instance.cron-machine]
+    )
     instances_tags = distinct(flatten([
         for instance in local.ansible_instances: instance.tags
     ]))

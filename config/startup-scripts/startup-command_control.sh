@@ -20,4 +20,4 @@ ansible-galaxy collection install community.docker
 while [ ! -f /root/hosts ] || [ ! -f /root/google_compute_engine ]; do echo "waiting for ansible inventory and private key"; sleep 2; done
 # Apply ansible role consul on consul cluster members
 export ANSIBLE_HOST_KEY_CHECKING=False
-ansible-playbook -i /root/hosts --private-key /root/google_compute_engine /ansible_gcp/playbooks/consul.yml
+ansible-playbook -i /root/hosts --private-key /root/google_compute_engine /ansible_gcp/playbooks/cron-machine.yml
