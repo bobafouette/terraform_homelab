@@ -4,7 +4,7 @@ resource "google_dns_managed_zone" "lab" {
   dns_name = "lab.blocker.rocks."
 }
 
-resource "google_dns_record_set" "container_reccords" {
+resource "google_dns_record_set" "container_records" {
   for_each = google_compute_instance.containers
   name = "${each.value.name}.${google_dns_managed_zone.lab.dns_name}"
 
