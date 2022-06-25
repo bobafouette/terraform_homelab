@@ -17,4 +17,4 @@ spec:
   volumes:
   - name: host-path-0
     hostPath:
-      path: /var/bitwarden/data/
+      path: /var/docker-peristant-sto/bitwarden/data/
