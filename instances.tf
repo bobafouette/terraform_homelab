@@ -5,7 +5,7 @@ resource "google_compute_instance" "control_command" {
   ## Removed consul-tags as well
   # tags = ["http-server", "https-server", "consul-member", "consul-master"]
   ##
-  tags = ["cron-machine"]
+  # tags = ["cron-machine"]
 
   boot_disk {
     initialize_params {
@@ -51,6 +51,11 @@ resource "google_compute_instance" "control_command" {
     destination = "google_compute_engine"
   }
 
+  provisioner "file" {
+    content     = file("auth/notion_api.key")
+    destination = "notion_api.key"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "chmod 500 google_compute_engine"
@@ -71,6 +76,11 @@ resource "google_compute_instance" "containers" {
     cloud_public_key = "${file("auth/google_compute_engine.pub")}",
     startup_container_script = "startup-${each.key}.sh"
   })
+
+  attached_disk {
+    source = google_compute_disk.docker_peristant_str.name
+    device_name = "docker-peristant-str"
+  }
 
   boot_disk {
     initialize_params {
