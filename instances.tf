@@ -69,12 +69,15 @@ resource "google_compute_instance" "containers" {
   machine_type = "g1-small"
   tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos", each.key]
 
-  metadata = {
-    gce-container-declaration = file(each.value)
-  }
+  # Removed in favor of ansible provisionning allowing more fine grained setup
+  # metadata = {
+  #   # See https://github.com/GoogleCloudPlatform/konlet/blob/9cb9106daf07123c2641159cb8bcc9d6f4960ec2/gce-containers-startup/types/api.go#L30
+  #   gce-container-declaration = file(each.value)
+  # }
   metadata_startup_script = templatefile("config/startup-scripts/startup-containers.sh", {
     cloud_public_key = "${file("auth/google_compute_engine.pub")}",
-    startup_container_script = "startup-${each.key}.sh"
+    startup_container_script = "startup-${each.key}.sh",
+    hostname = each.key
   })
 
   attached_disk {
