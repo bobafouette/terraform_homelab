@@ -4,6 +4,17 @@ resource "google_dns_managed_zone" "lab" {
   dns_name = "lab.blocker.rocks."
 }
 
+resource "google_dns_record_set" "lets_encrypt_caa_record" {
+  name = "lets_encrypt_caa_record"
+
+  type = "CAA"
+  ttl  = 300
+
+  managed_zone = google_dns_managed_zone.lab.name
+
+  rrdatas = "0 issue \"letsencrypt.org\""
+}
+
 resource "google_dns_record_set" "container_records" {
   for_each = google_compute_instance.containers
   name = "${each.value.name}.${google_dns_managed_zone.lab.dns_name}"
