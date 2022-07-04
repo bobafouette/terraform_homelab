@@ -20,13 +20,6 @@ lsblk -o fstype /dev/disk/by-id/google-docker-peristant-str | grep ext4 || mkfs.
 mkdir -p /var/docker-peristant-sto
 echo "/dev/disk/by-id/google-docker-peristant-str /var/docker-peristant-sto ext4 defaults 0 0" >> /etc/fstab
 
-
-#####
-# Create a certificate for this host
-#####
-# This is not working as the new DNS record is not propagated at this point to our recently created IP address
-docker run --rm --name certbot -p 80:80 -v /var/letsencrypt:/etc/letsencrypt/ certbot/certbot certonly --standalone --noninteractive  --agree-tos --preferred-challenges http --email loup.kreidl@gmail.com -d ${hostname}.lab.blocker.rocks --logs-dir /etc/letsencrypt/logs
-
 #####
 # Boostrap container configuration
 #####
