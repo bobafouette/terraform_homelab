@@ -2,17 +2,19 @@
 resource "google_dns_managed_zone" "lab" {
   name     = "lab"
   dns_name = "lab.blocker.rocks."
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes = ["name", "dns_name"]
+  }
 }
 
 resource "google_dns_record_set" "lets_encrypt_caa_record" {
-  name = "lets_encrypt_caa_record"
-
+  name = "lab.blocker.rocks."
   type = "CAA"
   ttl  = 300
-
   managed_zone = google_dns_managed_zone.lab.name
 
-  rrdatas = "0 issue \"letsencrypt.org\""
+  rrdatas = ["0 issue \"letsencrypt.org\""]
 }
 
 resource "google_dns_record_set" "container_records" {
