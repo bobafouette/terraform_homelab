@@ -67,7 +67,7 @@ resource "google_compute_instance" "containers" {
   for_each = local.gce_container_configs
   name = each.key
   machine_type = "g1-small"
-  tags = ["http-server", "https-server", "consul-member", "consul-slave", "coos", each.key]
+  tags = ["http-server", "https-server", "coos", each.key]
 
   # Removed in favor of ansible provisionning allowing more fine grained setup
   # metadata = {
