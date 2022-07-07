@@ -30,9 +30,8 @@ resource "google_compute_instance" "control_command" {
 
   metadata = {
     ssh-keys = file("auth/google_compute_engine.pub")
+    user-data = file("config/firstboot-scripts/firstboot-command_control.sh")
   }
-
-  metadata_startup_script = file("config/startup-scripts/startup-command_control.sh")
 
   connection {
     type     = "ssh"
@@ -69,11 +68,17 @@ resource "google_compute_instance" "containers" {
   machine_type = "g1-small"
   tags = ["http-server", "https-server", "coos", each.key]
 
-  # Removed in favor of ansible provisionning allowing more fine grained setup
-  # metadata = {
-  #   # See https://github.com/GoogleCloudPlatform/konlet/blob/9cb9106daf07123c2641159cb8bcc9d6f4960ec2/gce-containers-startup/types/api.go#L30
-  #   gce-container-declaration = file(each.value)
-  # }
+  metadata = {
+    # Removed in favor of ansible provisionning allowing more fine grained setup
+    # See https://github.com/GoogleCloudPlatform/konlet/blob/9cb9106daf07123c2641159cb8bcc9d6f4960ec2/gce-containers-startup/types/api.go#L30
+    # gce-container-declaration = file(each.value)
+    user-data = templatefile("config/firstboot-scripts/firstboot-containers.sh", {
+      cloud_public_key = "${file("auth/google_compute_engine.pub")}",
+      firstboot_container_script = "firstboot-${each.key}.sh",
+      hostname = each.key
+    })
+  }
+
   metadata_startup_script = templatefile("config/startup-scripts/startup-containers.sh", {
     cloud_public_key = "${file("auth/google_compute_engine.pub")}",
     startup_container_script = "startup-${each.key}.sh",
