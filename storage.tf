@@ -24,7 +24,7 @@ resource "google_compute_disk" "docker_peristant_str" {
   type = "pd-ssd"
   lifecycle {
     prevent_destroy = true
-    ignore_changes = ["name", "type"]
+    ignore_changes = [name, type]
   }
 }
 

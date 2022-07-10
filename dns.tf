@@ -4,7 +4,7 @@ resource "google_dns_managed_zone" "lab" {
   dns_name = "lab.blocker.rocks."
   lifecycle {
     prevent_destroy = true
-    ignore_changes = ["name", "dns_name"]
+    ignore_changes = [name, dns_name]
   }
 }
 
