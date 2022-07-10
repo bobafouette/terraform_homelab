@@ -1,6 +1,6 @@
 resource "google_compute_resource_policy" "daily_backup_policy" {
   name   = "daily-backup-policy"
-  region = "us-central1"
+  region = "europe-west4"
 
   snapshot_schedule_policy {
     schedule {
