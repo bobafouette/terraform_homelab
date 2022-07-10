@@ -56,6 +56,11 @@ resource "google_compute_instance" "control_command" {
     destination = "notion_api.key"
   }
 
+  provisioner "file" {
+    content     = file("auth/bitwarden_admin_token.key")
+    destination = "bitwarden_admin_token.key"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "chmod 500 google_compute_engine"
