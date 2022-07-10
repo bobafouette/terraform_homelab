@@ -17,8 +17,10 @@ docker exec sshd python3.6 -m pip install docker
 # Mount persistant drive
 #####
 lsblk -o fstype /dev/disk/by-id/google-docker-peristant-str | grep ext4 || mkfs.ext4 /dev/disk/by-id/google-docker-peristant-str
-mkdir -p /var/docker-peristant-sto
-echo "/dev/disk/by-id/google-docker-peristant-str /var/docker-peristant-sto ext4 defaults 0 0" >> /etc/fstab
+if [[ ! -d /var/docker-peristant-sto ]]; then
+    mkdir -p /var/docker-peristant-sto
+fi
+mount -t ext4 /dev/disk/by-id/google-docker-peristant-str /var/docker-peristant-sto
 
 #####
 # Boostrap container configuration
