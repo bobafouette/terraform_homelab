@@ -25,13 +25,16 @@ I could not find any official documentation on this subject but CoOS instances a
 
 
 ## Todo:
-- Find an elegant solution to upload notion's API_KEY into the cron-machine
+- ~~Find an elegant solution to upload notion's API_KEY into the cron-machine~~
+- Deploy a SMTP web server
+- Deploy a matrix (synapse, postgre, element) setup.
+- Need to streamline deployement of secure tokens...
 - Test Nomad [ON HOLD]
   - Replace Container optimized os Instances by regular ubuntu instances
   - Deploy Consul and Nomad on them
   - Add Firewall rule to allow HTTP UI acces on the Nomad instance (port `4646`)
   - Schedule containers via Nomad's docker plugin on those instances
-- Traefik/nginx reverse proxy based on consul [ON HOLD]
+- ~~Traefik/nginx reverse proxy~~: This is installed locally on coos instances. Might switch later to cluster deployment via consul or swarm.
 - Deploy Vault [ON HOLD]
 - Deploy Boundary [ON HOLD]
 - ...?
