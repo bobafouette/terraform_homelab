@@ -25,7 +25,7 @@ locals {
   ]))
   instances_tag_map = {
       for tag in local.instances_tags: tag => [
-          for instance in local.ansible_instances: instance.network_interface[0].network_ip if contains(instance.tags, tag)
+          for instance in local.ansible_instances: instance.name if contains(instance.tags, tag)
       ]
   }
 
