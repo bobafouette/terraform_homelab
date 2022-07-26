@@ -1,6 +1,8 @@
-%{ for tag, instances in tag_map ~}
-[${tag}]
-%{ for instance_ip in instances }${instance_ip}
+%{ for tag, instances in tag_map["hosts_tags"] ~}[${tag}]
+%{ for instance_hostname in instances }${instance_hostname}
 %{ endfor ~}
-
+%{ endfor ~}
+%{ for tag, instances in tag_map["container_tags"] ~}[${tag}]
+%{ for instance_hostname in instances }${instance_hostname}_dockersshd
+%{ endfor ~}
 %{ endfor ~}

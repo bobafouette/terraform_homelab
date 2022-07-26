@@ -47,6 +47,15 @@ resource "google_compute_instance" "control_command" {
   }
 
   provisioner "file" {
+    content     = templatefile("config/ressources/ssh_config.tftpl", {container_instances = [
+      for instance in local.ansible_instances: instance.name if contains(
+        [for container_instance in google_compute_instance.containers: container_instance.name], instance.name
+      )
+    ]})
+    destination = "hosts"
+  }
+
+  provisioner "file" {
     content     = file("auth/google_compute_engine")
     destination = "google_compute_engine"
   }
@@ -69,11 +78,10 @@ resource "google_compute_instance" "control_command" {
 }
 
 resource "google_compute_instance" "containers" {
-  for_each = local.gce_container_configs
+  for_each = local.gce_containers
   name = each.key
   machine_type = "g1-small"
-  tags = ["http-server", "https-server", "coos", each.key]
-
+  tags = concat(["http-server", "https-server", "coos"], each.value)
   # Removed in favor of ansible provisionning allowing more fine grained setup
   # metadata = {
   #   # See https://github.com/GoogleCloudPlatform/konlet/blob/9cb9106daf07123c2641159cb8bcc9d6f4960ec2/gce-containers-startup/types/api.go#L30

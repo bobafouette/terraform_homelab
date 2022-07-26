@@ -21,7 +21,18 @@ This seems to prevent installation of keys inside root's home via provided metad
 To prevent this I had to push an adapted configuration for sshd at statup and point to a custom path to look for authorized_keys before pushing the keys into this file via the startup script.
 
 ### Use metadata to automate container startup inside CoOS instances
-I could not find any official documentation on this subject but CoOS instances allows us to pass configurations for our main container into the metadata of the instances.  
+I could not find any official documentation on this subject but CoOS instances allows us to pass configurations for our main container into the metadata of the instances. However this method was not extremely effective because it would not allow to start multiple containers on the same host at startup.
+
+## Issues
+
+### COOS, Ansible & host inventory
+
+I am having an issue with handling coos machine configuration right:
+To configure COOS host's containers it is necessary to use an ssh docker container: a python3 is running inside it and allows to install tools to control containers via ansible from the inside of this container.
+
+The issue is that this container has it's ssh server listenning on port 2222, to access it we must configure ansible to connect to this port and then configure it back to standard port 22 so we can run next playbook on it without impacting it's run.
+However I could not find an idempotent way to apply this architecture.
+We would need to have different hosts, or group that configure a port for this machine maybe via the `ansible_port` variable.
 
 
 ## Todo:
