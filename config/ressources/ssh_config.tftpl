@@ -1,0 +1,11 @@
+%{ for instance in container_instances ~}Host ${instance}
+    Port 22
+    IdentityFile /root/google_compute_engine
+    User root
+
+Host ${instance}_dockersshd
+    Port 2222
+    IdentityFile /root/google_compute_engine
+    User dev
+    Hostname ${instance}
+%{ endfor ~}

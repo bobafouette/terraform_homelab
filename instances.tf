@@ -52,7 +52,7 @@ resource "google_compute_instance" "control_command" {
         [for container_instance in google_compute_instance.containers: container_instance.name], instance.name
       )
     ]})
-    destination = "hosts"
+    destination = ".ssh/config"
   }
 
   provisioner "file" {
