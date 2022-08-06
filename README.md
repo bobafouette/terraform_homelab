@@ -23,6 +23,17 @@ To prevent this I had to push an adapted configuration for sshd at statup and po
 ### Use metadata to automate container startup inside CoOS instances
 I could not find any official documentation on this subject but CoOS instances allows us to pass configurations for our main container into the metadata of the instances. However this method was not extremely effective because it would not allow to start multiple containers on the same host at startup.
 
+### COOS, Ansible & host inventory
+
+The COOS instances have two sshd server running on them:
+- Listening on the port 22, running directly on the host this is the default sshd server.
+- Listening on the port 2222, running inside a container this is a custom sshd server configured to allow ansible to access the docker engine from an external host.
+
+When starting up a COOS instance, multiple configuration files are then pushed on the *control-command* machine:
+- Multiple entries are created in the ansible inventory (`hosts` file) some are named as `<hostname>_dockersshd` and others simply `<hostname>`.
+- A custom entry is added to the `ssh` config file that redirects connexions to `<hostname>_dockersshd` to `<hostname>` on port 2222.
+This will allow different ansible roles to be applied to the COOS instances either on the host itself or via the container that can manages the docker engine by targeting groups.
+
 ## Issues
 
 ### COOS, Ansible & host inventory
@@ -33,6 +44,8 @@ To configure COOS host's containers it is necessary to use an ssh docker contain
 The issue is that this container has it's ssh server listenning on port 2222, to access it we must configure ansible to connect to this port and then configure it back to standard port 22 so we can run next playbook on it without impacting it's run.
 However I could not find an idempotent way to apply this architecture.
 We would need to have different hosts, or group that configure a port for this machine maybe via the `ansible_port` variable.
+
+This is fixed: See **Interesting tricks** > **COOS, Ansible & host inventory** section.
 
 
 ## Todo:
